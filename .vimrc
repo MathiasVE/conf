@@ -1,7 +1,8 @@
 execute pathogen#infect()
+
+" All UTF-8!
 scriptencoding utf-8
 set encoding=utf-8
-
 if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
    set fileencodings=ucs-bom,utf-8,latin1
 endif
@@ -21,7 +22,6 @@ endif
 filetype plugin indent on
 
 " nice colorscheme
-" execute pathogen#infect('bundle/{}')
 colorscheme koehler
 
 " list tabs and newlines
@@ -39,6 +39,9 @@ endif
 
 " Handy status line.
 set laststatus=2
+
+" key mapping for fugitive
+nnoremap <space>gb :Gblame<CR>
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme = 'powerlineish'
