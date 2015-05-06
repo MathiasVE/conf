@@ -1,3 +1,6 @@
 [submodule ".vim/bundle/vim-airline"]
 	path = .vim/bundle/vim-airline
 	url = https://github.com/bling/vim-airline.git
+[submodule ".vim/bundle/maven-compiler"]
+	path = .vim/bundle/maven-compiler
+	url = https://github.com/JalaiAmitahl/maven-compiler.vim

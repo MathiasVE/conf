@@ -30,3 +30,23 @@ export TERM=xterm-256color
 git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
 git config alias.spush 'push --recurse-submodules=on-demand'
 git config alias.supdate 'submodule update --remote --merge'
+
+session="tmux-main-session"
+if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
+	echo "INIT TMUX SESSION $session"
+	tmux new-session -d -s "$session"
+	tmux attach -t "$session"
+fi
+
+function exit() {
+	if [[ -z $TMUX ]]; then
+		if (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
+			tmux kill-session -t "$session"
+		fi
+		builtin exit
+	elif [ $(tmux list-panes | wc -l) -le 1 ]; then
+		tmux detach
+	else
+		builtin exit
+	fi
+}
