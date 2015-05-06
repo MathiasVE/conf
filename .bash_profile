@@ -33,19 +33,25 @@ git config alias.supdate 'submodule update --remote --merge'
 
 # TODO: should seek to reattach to old session if it still exists after kill -9 of bash process
 session="tmux-main-session"
-if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
-	echo "INIT TMUX SESSION $session"
-	tmux new-session -d -s "$session"
+
+if [ "$TMUX" = "" ]; then # Only attach when the shell is not running inside TMUX already
+	# Only initialize a new tmux session when the session does not exists
+	if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
+		echo "INIT TMUX SESSION $session"
+		tmux new-session -d -s "$session"
+		tmux new-window -k -n workspace
+	fi
 	tmux attach -t "$session"
 fi
 
 function exit() {
 	if [[ -z $TMUX ]]; then
-		if (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
-			tmux kill-session -t "$session"
-		fi
+		# TODO: will attach child process to the INIT process :s
+		# if (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
+		# 	tmux kill-session -t "$session"
+		# fi
 		builtin exit
-	elif [ $(tmux list-panes | wc -l) -le 1 ]; then
+	elif [ $(tmux list-panes | wc -l) -le 1 ] && [ $(tmux list-windows | wc -l) -le 1 ]; then
 		tmux detach
 	else
 		builtin exit
