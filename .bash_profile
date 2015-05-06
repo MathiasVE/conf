@@ -31,6 +31,7 @@ git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
 git config alias.spush 'push --recurse-submodules=on-demand'
 git config alias.supdate 'submodule update --remote --merge'
 
+# TODO: should seek to reattach to old session if it still exists after kill -9 of bash process
 session="tmux-main-session"
 if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
 	echo "INIT TMUX SESSION $session"
