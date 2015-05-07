@@ -1,0 +1,11 @@
+# VIM functionality
+ [ ] File search / class search
+ [ ] JUnit integration
+ [ ] Vim db access [ ]> check vim[ ]scripts/dbext.vim
+ [ ] JEE code completion [ ]> eclim
+ [ ] Debug functionality
+ [ ] Clear short[ ]cuts + easy accessible help list (indicated in footer/header for others) 
+ [ ] Make installation list
+
+# BASH
+ [ ] Document easy ssh rsa-key access to all servers
