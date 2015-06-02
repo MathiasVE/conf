@@ -30,6 +30,12 @@ export TERM=xterm-256color
 git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
 git config alias.spush 'push --recurse-submodules=on-demand'
 git config alias.supdate 'submodule update --remote --merge'
+git config alias.st status
+git config alias.co checkout
+git config alias.br branch
+git config alias.ci commit
+git config alias.mylog "log --pretty=format:'%h %s [%an]' --graph"
+git config alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 
 # get current branch in git repo
 function parse_git_branch() {
