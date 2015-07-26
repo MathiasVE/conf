@@ -11,16 +11,18 @@ During the installation select following packages:
  - OpenSsh
  - Git
  - Git-completion
+ - psmisc (for the 'pstree' command)
+ - procps (for the 'top' command)
 
 We will assume throughout the instructions that we are working with Cygwin but usually it is easier on other linux distributions :-)
 
-## installation
+## Installation
 ```
-git clone https://github.com/MathiasVE/conf.git .
+git clone --recursive https://github.com/MathiasVE/conf.git .
 ```
 Follow the [GitHub ssh key generation instructions](https://help.github.com/articles/generating-ssh-keys/#platform-linux).
 
-## gitignore
+## Gitignore
 Create the git-ignore file.
 ```
 vim .gitignore
@@ -34,4 +36,21 @@ And put following contents inside
 .profile¬
 .viminfo¬
 .gitignore
+.gitconfig
+.fonts¬
+powerline-fonts
 ```
+
+## Fonts
+Fetch the powerline fonts
+```
+mkdir powerline-fonts
+cd powerline-fonts
+git clone https://github.com/powerline/fonts.git .
+./install.sh
+```
+
+For Cygwin you need to manually install the 'Droid Sans Mono for Powerline' font (or any that you prefer) on windows.
+Then you right-click on the cygwin console and select 'text' in the options overview.
+Here you select the installed font and depending on the computer I prefer to increase the font-size.
+Also change the cursor to 'block' under 'looks'
