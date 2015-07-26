@@ -14,9 +14,24 @@ During the installation select following packages:
 
 We will assume throughout the instructions that we are working with Cygwin but usually it is easier on other linux distributions :-)
 
-
 ## installation
 ```
-git clone https://github.com/MathiasVE/conf.git
+git clone https://github.com/MathiasVE/conf.git .
 ```
 Follow the [GitHub ssh key generation instructions](https://help.github.com/articles/generating-ssh-keys/#platform-linux).
+
+## gitignore
+Create the git-ignore file.
+```
+vim .gitignore
+```
+And put following contents inside
+```
+.bash_history¬
+.bashrc¬
+.inputrc¬
+.minttyrc¬
+.profile¬
+.viminfo¬
+.gitignore
+```
