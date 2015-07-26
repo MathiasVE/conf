@@ -13,6 +13,7 @@ During the installation select following packages:
  - Git-completion
  - psmisc (for the 'pstree' command)
  - procps (for the 'top' command)
+ - wget
 
 We will assume throughout the instructions that we are working with Cygwin but usually it is easier on other linux distributions :-)
 
@@ -54,3 +55,8 @@ For Cygwin you need to manually install the 'Droid Sans Mono for Powerline' font
 Then you right-click on the cygwin console and select 'text' in the options overview.
 Here you select the installed font and depending on the computer I prefer to increase the font-size.
 Also change the cursor to 'block' under 'looks'
+
+## Git-flow
+```
+wget -q -O - --no-check-certificate https://github.com/nvie/gitflow/raw/develop/contrib/gitflow-installer.sh | bash
+```
