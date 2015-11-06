@@ -84,20 +84,9 @@ function parse_git_dirty {
 	fi
 }
 
+# See for mercurial integration
 export PS1="\[\e[35m\]\u\[\e[m\]@\[\e[32m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
 
-# TODO: should seek to reattach to old session if it still exists after kill -9 of bash process
-session="tmux-main-session"
-
-if [ "$TMUX" = "" ]; then # Only attach when the shell is not running inside TMUX already
-	# Only initialize a new tmux session when the session does not exists
-	if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
-		echo "INIT TMUX SESSION $session"
-		tmux new-session -d -s "$session"
-		tmux new-window -k -n workspace
-	fi
-	tmux attach -t "$session"
-fi
 
 function exit() {
 	if [[ -z $TMUX ]]; then
@@ -113,4 +102,61 @@ function exit() {
 	fi
 }
 
+# Fix java heap space allocation
+case "`uname`" in
+  CYGWIN*) 
+	  peflags --cygwin-heap=1024 ~/workspace/NSF/infrastructure/jdk1.7.0_51/Windows/jdk1.7.0_51/bin/java.exe > /dev/null 2>&1;
+	  peflags --cygwin-heap=1024 ~/jdk/jdk1.7.0_51/Windows/jdk1.7.0_51/bin/java.exe > /dev/null 2>&1;
+	  # Errors are ignored as it simply indicates that the file is in use and most likely the option was already set
+	  ;;
+esac
 
+if [ -f "${HOME}/.ns_scripts" ] ; then
+  source "${HOME}/.ns_scripts"
+fi
+
+# Easy to find text recursively starting from the current directory
+quick_search() {
+if [ $# -eq 0 ]; then
+	echo "Please specify a word to look for"
+else
+	find . -type f -print0 | xargs -0 grep -l $1
+fi
+}
+
+# TODO: should seek to reattach to old session if it still exists after kill -9 of bash process
+session="tmux-main-session"
+
+if [ "$TMUX" = "" ]; then # Only attach when the shell is not running inside TMUX already
+# Only initialize a new tmux session when the session does not exists
+if ! (tmux has-session -t "$session" 2> /dev/null) && [ "$TMUX" = "" ]; then
+	echo "INIT 2 TMUX SESSION $session"
+	tmux new-session -d -s "$session"
+	tmux rename-window "general"
+	tmux new-window -k -n "notes" 'vim ~/notes/improve_ideas'
+	tmux new-window -k -n "jonas"
+	tmux split-window 'tail -f ~/logs/gc.log'
+	tmux split-window '~/jdk/jvmtop.sh'
+        tmux new-window -k -n "stadim"
+	tmux new-window -k -n "startit"
+fi
+tmux attach -t "$session"
+fi
+
+hgdiff() {
+if [ $# -eq 0 ]; then
+	pushd . > /dev/null;
+	cd ~/workspace/NSF/$NS_WS/descriptors;
+	for f in $(hg status | grep "M " | cut -d ' ' -f2); # TODO: see if I can skip deleted files
+	do
+		vimdiff -c 'map q :qa!<CR>' <(hg cat "$f") "$f";
+	done;
+	popd > /dev/null;
+else
+	vimdiff -c 'map q :qa!<CR>' <(hg cat "$1") "$1";
+fi
+}
+
+untar() {
+	tar -xvf $1
+}

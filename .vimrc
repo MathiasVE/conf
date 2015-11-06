@@ -12,6 +12,9 @@ set bs=indent,eol,start          " Allow backspacing over everything in insert m
 set viminfo='20,\"50             " use .viminfo file (not longer then 50 lines)
 set history=50                   " Max 50 vim history commands
 set ruler                        " Always show the cursor
+set expandtab
+set tabstop=2
+set shiftwidth=2
 
 " Switch syntax highlighting on
 if &t_Co > 2 || has("gui_running")
