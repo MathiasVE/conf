@@ -14,6 +14,7 @@ During the installation select following packages:
  - psmisc (for the 'pstree' command)
  - procps (for the 'top' command)
  - wget
+ - tree
 
 We will assume throughout the instructions that we are working with Cygwin but usually it is easier on other linux distributions :-)
 
