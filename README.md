@@ -15,6 +15,7 @@ During the installation select following packages:
  - procps (for the 'top' command)
  - wget
  - tree
+ - dialog
 
 We will assume throughout the instructions that we are working with Cygwin but usually it is easier on other linux distributions :-)
 
