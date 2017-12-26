@@ -48,7 +48,6 @@ set laststatus=2
 nnoremap <space>gb :Gblame<CR>
 
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme = 'powerlineish'
 if has ('win32unix') && !has('gui_running')
 	set guifont=DejaVu\ Sans\ Mono\ 10
 	let g:airline_powerline_fonts = 1
