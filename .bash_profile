@@ -183,7 +183,7 @@ fi
 }
 
 gitdiff() {
-  git d
+  git difftool
 }
 
 untar() {
