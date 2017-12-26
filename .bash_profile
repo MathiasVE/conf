@@ -156,7 +156,7 @@ fi
 }
 
 # TODO: should seek to reattach to old session if it still exists after kill -9 of bash process
-session="tmux-main-session"
+session="tmux"
 
 if [ "$TMUX" = "" ]; then # Only attach when the shell is not running inside TMUX already
 # Only initialize a new tmux session when the session does not exists
