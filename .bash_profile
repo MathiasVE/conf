@@ -18,6 +18,13 @@ if [ -d "${HOME}/bin" ] ; then
   PATH="${HOME}/bin:${PATH}"
 fi
 
+# Load extra sources from source directory
+if [ -d "${HOME}/src" ] ; then
+  for f in ${HOME}/src/*; do
+    source "${f}";
+  done
+fi
+
 # Set MANPATH so it includes users' private man if it exists
 if [ -d "${HOME}/man" ]; then
   MANPATH="${HOME}/man:${MANPATH}"
@@ -40,17 +47,20 @@ git config --global alias.co checkout
 git config --global alias.br branch
 git config --global alias.ci commit
 git config --global alias.mylog "log --pretty=format:'%h %s [%an]' --graph"
-git config --global alias.lol "log --graph --decorate --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all"
+git config --global alias.lol "log --graph --decorate --date=iso --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci) %C(bold blue)<%an>%Creset' --abbrev-commit --all"
 
 function get_java_version() {
   echo "[jdk:$JAVA_VERSION]"
 }
-# get current branch in git repo
+
 function parse_ns_ws() {
   if [[ $(pwd) =~ /cygdrive/c/NSF-3.0/workspace_(.*)/descriptors ]]; then
      echo "[ws:${BASH_REMATCH[1]}]"
+   elif [[ $(pwd) =~ /cygdrive/c/NSF-3.0/primespace/expansionsPR/(.*)-id([0-9]+) ]]; then
+     echo "[exp:${BASH_REMATCH[1]}-${BASH_REMATCH[2]}]"
   fi
 }
+
 function parse_git_branch() {
   BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
   if [ ! "${BRANCH}" == "" ]
@@ -113,7 +123,7 @@ function parse_git_dirty {
 
 # See for mercurial integration
 # export PS1="\[\e[35m\]\u\[\e[m\]@\[\e[32m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[1;31m\]\`parse_ns\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
-export PS1="\[\e[36m\]\`nice_path\`\[\e[m\]\[\e[35m\]\`get_java_version\`\[\e[m\]\[\e[32m\]\`parse_ns_ws\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
+export PS1="\[\e[36m\]\`short_path\`\[\e[m\]\[\e[35m\]\`get_java_version\`\[\e[m\]\[\e[32m\]\`parse_ns_ws\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
 
 
 function exit() {
@@ -182,9 +192,7 @@ else
 fi
 }
 
-gitdiff() {
-  git difftool
-}
+alias gitdiff='git difftool'
 
 untar() {
   tar -xvf $1
@@ -201,19 +209,11 @@ mvn_init() {
 }
 
 jdk() {
-  TMP_JDK_SELECTION_FILE=$(mktemp)
-  dialog --menu "Select java JDK Version:" 10 30 3 \
-    1 "1.6.0_45" \
-    2 "1.7.0_80" \
-    3 "1.8.0_151" 2>$TMP_JDK_SELECTION_FILE
+  SELECTION=$(select_from_evaluation "echo 1.6.0_45; echo 1.7.0_80; echo 1.8.0_151")
   clear
-  RESULT=$(cat $TMP_JDK_SELECTION_FILE)
-  case $RESULT in
-    1) set_jdk "1.6.0_45";;
-    2) set_jdk "1.7.0_80";;
-    3) set_jdk "1.8.0_151";;
-  esac
-  rm $TMP_JDK_SELECTION_FILE
+  if [ "$SELECTION" != "" ]; then
+    set_jdk $SELECTION
+  fi
 }
 
 set_jdk() {
@@ -233,19 +233,28 @@ set_jdk() {
 
 set_jdk "1.8.0_151"
 
-function ws() {
-  if [ $# -eq 1 ]; then
-    if [ -d /cygdrive/c/NSF-3.0/workspace_$1/descriptors/ ]; then
-       cd /cygdrive/c/NSF-3.0/workspace_$1/descriptors/
-    else 
-      echo "The workspace directory /cygdrive/c/NSF-3.0/workspace_$1/descriptors/ could not be found"
+#TODO: if evaluation only has 1 value -> auto select 
+function select_from_evaluation() {
+  if [ $# -eq 1 ] && ! [ -z "$PS1" ]; then
+    TO_EVAL=$1
+    let i=0;
+    W=();
+    while read -r line; do
+      let i=$i+1
+      W+=($i "$line")
+    done < <(eval $TO_EVAL)
+    SELECTION=$(dialog --title "Select" --menu "Choose one" 24 80 17 "${W[@]}" 3>&2 2>&1 1>&3)
+    if [ $? -eq 0 ]; then
+      SELECTION=$((SELECTION * 2))
+      SELECTION=$((SELECTION - 1))
+      echo ${W[$SELECTION]}
     fi
-  else
-    echo "Please specify a workspace directory"
   fi
 }
 
-nice_path() {
+
+
+short_path() {
   case $PWD in
     $HOME) HPWD="~";;
     $HOME/*/*) HPWD="${PWD#"${PWD%/*/*}/"}";;
