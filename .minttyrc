@@ -1,9 +1,10 @@
 BoldAsFont=no
 CursorType=block
-Font=DejaVu Sans Mono for Powerline
+Font=Fira Mono for Powerline
 FontHeight=11
 FontIsBold=yes
 Scrollbar=none
 Locale=nl_BE
 Charset=UTF-8
 FontWeight=700
+FontSmoothing=default
