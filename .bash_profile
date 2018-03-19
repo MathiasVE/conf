@@ -180,13 +180,10 @@ fi
 
 hgdiff() {
 if [ $# -eq 0 ]; then
- #  pushd . > /dev/null;
- #  cd ~/workspace/NSF/$NS_WS/descriptors;
   for f in $(hg status | grep "M " | cut -d ' ' -f2); # TODO: see if I can skip deleted files
   do
     vimdiff -c 'map q :qa!<CR>' <(hg cat "$f") "$f";
   done;
- #  popd > /dev/null;
 else
   vimdiff -c 'map q :qa!<CR>' <(hg cat "$1") "$1";
 fi
@@ -210,7 +207,6 @@ mvn_init() {
 
 jdk() {
   SELECTION=$(select_from_evaluation "echo 1.6.0_45; echo 1.7.0_80; echo 1.8.0_151")
-  clear
   if [ "$SELECTION" != "" ]; then
     set_jdk $SELECTION
   fi
@@ -249,6 +245,7 @@ function select_from_evaluation() {
       SELECTION=$((SELECTION - 1))
       echo ${W[$SELECTION]}
     fi
+    clear 3>&2 2>&1 1>&3
   fi
 }
 
