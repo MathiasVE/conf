@@ -8,3 +8,4 @@ Locale=nl_BE
 Charset=UTF-8
 FontWeight=700
 FontSmoothing=default
+BellType=0
