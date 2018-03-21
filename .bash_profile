@@ -239,13 +239,17 @@ function select_from_evaluation() {
       let i=$i+1
       W+=($i "$line")
     done < <(eval $TO_EVAL)
-    SELECTION=$(dialog --title "Select" --menu "Choose one" 24 80 17 "${W[@]}" 3>&2 2>&1 1>&3)
-    if [ $? -eq 0 ]; then
-      SELECTION=$((SELECTION * 2))
-      SELECTION=$((SELECTION - 1))
-      echo ${W[$SELECTION]}
+    if [ $i -eq 1 ]; then
+      echo ${W[$i]}
+    else
+      SELECTION=$(dialog --title "Select" --menu "Choose one" 24 80 17 "${W[@]}" 3>&2 2>&1 1>&3)
+      if [ $? -eq 0 ]; then
+        SELECTION=$((SELECTION * 2))
+        SELECTION=$((SELECTION - 1))
+        echo ${W[$SELECTION]}
+      fi
+      clear 3>&2 2>&1 1>&3
     fi
-    clear 3>&2 2>&1 1>&3
   fi
 }
 
