@@ -55,9 +55,29 @@ function get_java_version() {
 
 function parse_ns_ws() {
   if [[ $(pwd) =~ /cygdrive/c/NSF-3.0/workspace_(.*)/descriptors ]]; then
-     echo "[ws:${BASH_REMATCH[1]}]"
+    echo "[ws:${BASH_REMATCH[1]}$(get_nsf)]"
    elif [[ $(pwd) =~ /cygdrive/c/NSF-3.0/primespace/expansionsPR/(.*)-id([0-9]+) ]]; then
-     echo "[exp:${BASH_REMATCH[1]}-${BASH_REMATCH[2]}]"
+     echo "[exp:${BASH_REMATCH[1]}-${BASH_REMATCH[2]}$(get_nsf)]"
+   elif [[ $(pwd) =~ /cygdrive/c/NSF/workspace/([^\/]*) ]]; then
+    echo "[ws:${BASH_REMATCH[1]}$(get_nsf)]"
+   elif [[ $(pwd) =~ /cygdrive/c/NSF/expansions/([^\/]*) ]]; then
+    echo "[exp:${BASH_REMATCH[1]}$(get_nsf)]"
+  fi
+}
+
+function get_nsf() {
+  if [ "$GLOBAL_NSF" != "" ]; then
+    echo "-$GLOBAL_NSF";
+  else
+    echo ""
+  fi
+}
+
+function get_pr() {
+  if [ "$GLOBAL_PR" != "" ]; then
+    echo "[PR-$GLOBAL_PR]";
+  else
+    echo ""
   fi
 }
 
@@ -123,7 +143,7 @@ function parse_git_dirty {
 
 # See for mercurial integration
 # export PS1="\[\e[35m\]\u\[\e[m\]@\[\e[32m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[1;31m\]\`parse_ns\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
-export PS1="\[\e[36m\]\`short_path\`\[\e[m\]\[\e[35m\]\`get_java_version\`\[\e[m\]\[\e[32m\]\`parse_ns_ws\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
+export PS1="\[\e[36m\]\`short_path\`\[\e[m\]\[\e[35m\]\`get_java_version\`\[\e[m\]\[\e[32m\]\`parse_ns_ws\`\[\e[m\]\[\e[32m\]\`get_pr\`\[\e[m\]\[\e[33m\]\`parse_git_branch\` \[\e[m\]"
 
 
 function exit() {
@@ -143,12 +163,12 @@ function exit() {
 # Fix java heap space allocation
 case "`uname`" in
   CYGWIN*) 
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.6.0_22/Windows/jdk1.6.0_22/bin/java.exe > /dev/null 2>&1;
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.6.0_45/Windows/jdk1.6.0_45/bin/java.exe > /dev/null 2>&1;
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.7.0_51/Windows/jdk1.7.0_51/bin/java.exe > /dev/null 2>&1;
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.7.0_80/Windows/jdk1.7.0_80/bin/java.exe > /dev/null 2>&1;
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.8.0_73/Windows/jdk1.8.0_73/bin/java.exe > /dev/null 2>&1;
-    peflags --cygwin-heap=4096 /cygdrive/c/NSF-3.0/infrastructure/jdk1.8.0_151/Windows/jdk1.8.0_151/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.6.0_22/Windows/jdk1.6.0_22/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.6.0_45/Windows/jdk1.6.0_45/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.7.0_51/Windows/jdk1.7.0_51/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.7.0_80/Windows/jdk1.7.0_80/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.8.0_73/Windows/jdk1.8.0_73/bin/java.exe > /dev/null 2>&1;
+    peflags --cygwin-heap=4096 /cygdrive/c/NSF/infrastructure/jdk1.8.0_151/Windows/jdk1.8.0_151/bin/java.exe > /dev/null 2>&1;
     ;;
 esac
 
@@ -214,9 +234,9 @@ jdk() {
 
 set_jdk() {
   if [ $# -eq 1 ]; then
-    PATH=$(echo "$PATH" | sed -e "s#/cygdrive/c/NSF-3.0/infrastructure/jdk${JAVA_VERSION}/Windows/jdk${JAVA_VERSION}/bin:##")
+    PATH=$(echo "$PATH" | sed -e "s#/cygdrive/c/NSF/infrastructure/jdk${JAVA_VERSION}/Windows/jdk${JAVA_VERSION}/bin:##")
     export JAVA_VERSION=$1
-    export JAVA_DIR="/cygdrive/c/NSF-3.0/infrastructure/jdk${JAVA_VERSION}/Windows/jdk${JAVA_VERSION}"
+    export JAVA_DIR="/cygdrive/c/NSF/infrastructure/jdk${JAVA_VERSION}/Windows/jdk${JAVA_VERSION}"
     export JAVA_HOME=$(cygpath -pw "${JAVA_DIR}")
 
     if [ -d "${JAVA_DIR}/bin" ] ; then
@@ -264,4 +284,13 @@ short_path() {
     *) HPWD="$PWD";;
   esac;
   echo $HPWD;
+}
+
+clean_timesheet() {
+  ARGS="$@"
+  /cygdrive/c/Program\ Files\ \(x86\)/ManicTime/Mtc.exe export ManicTime/Tags 'C:\Users\mathias.verelst\Desktop\abc-groep\timesheets\ManicTime_export.csv' "/fd:2015-01-01" "/td:2019-01-01"
+  pushd . > /dev/null;
+  cd ~/workspace/clean_timesheet;
+  ./clean-timesheet.sh $@
+  popd > /dev/null
 }
