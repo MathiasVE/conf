@@ -181,7 +181,7 @@ quick_search() {
 if [ $# -eq 0 ]; then
   echo "Please specify a word to look for"
 else
-  find . -type f -print0 | xargs -0 grep -l $1
+  find . -type f -print0 | xargs -0 grep -l "$1"
 fi
 }
 
